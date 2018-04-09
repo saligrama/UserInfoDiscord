@@ -1,0 +1,10 @@
+{
+  "name": "UserInfoBot",
+  "version": "1.0.0",
+  "description": "A bot to send user info when a user joins a Discord server",
+  "main": "main.js",
+  "author": "Double Claw Hammer",
+  "dependencies": {
+    "discord.js": "^11.3.0"
+  }
+}
