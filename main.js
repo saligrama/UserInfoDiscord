@@ -62,7 +62,7 @@ client.on("message", message => {
 
 client.on('guildMemberAdd', member => {
   //when someone joins this event is called, the variable member is of type GuildMember in Discord.JS
-  sendMessage("**User <@" + message.member.user.id + "> has joined.**\n**ID:** " + message.member.id + "\n**Avatar URL:** " + message.member.user.displayAvatarURL() + "\n**Is a bot?** " + message.member.user.bot + "\n**Account Created At**: " + message.member.user.createdAt, botLoggingChannel);
+  sendMessage("**User <@" + member.user.id + "> has joined.**\n**ID:** " + member.id + "\n**Avatar URL:** " + member.user.displayAvatarURL() + "\n**Is a bot?** " + member.user.bot + "\n**Account Created At**: " + member.user.createdAt, botLoggingChannel);
 });
 
 client.login(auth.token);
