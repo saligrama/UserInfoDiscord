@@ -5,6 +5,6 @@
   "main": "main.js",
   "author": "Double Claw Hammer",
   "dependencies": {
-    "discord.js": "^11.3.0"
+    "discord.js": ">12.0"
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Aditya Saligrama.
+ * Copyright (c) 2018 Aditya Saligrama and contributors.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,27 +20,27 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-// Load up the discord.js library
-const Discord = require("discord.js");
+// UserInfoBot for RCR Discord
+// Now working with Discord.JS v12!
 
-// This is your client. Some people call it `bot`, some people call it `self`,
-// some might call it `cootchie`. Either way, when you see `client.something`, or `bot.something`,
-// this is what we're refering to. Your client.
-const client = new Discord.Client();
+// Load up the discord.js library (added intents to satisfy Discord gateway v8)
+const { Client , Intents } = require('discord.js');
+const myIntents = new Intents();
+myIntents.add('GUILDS', 'GUILD_MESSAGES', 'GUILD_MEMBERS');
 
-// Here we load the config.json file that contains our token and our prefix values.
+// Instantiate client with intents
+const client = new Client({ partials: ["REACTION", "MESSAGE"], ws: { intents: myIntents } });
+
+// Here we load the config.json file that contains our token
 const auth = require("./auth.json");
 // config.token contains the bot's token
-// config.prefix contains the message prefix.
 
 // modify this for your own server
-const botLoggingChannel = 432882562658992138;
+const botLoggingChannel = "audit";
 
 client.on("ready", () => {
   // This event will run if the bot starts, and logs in, successfully.
-  console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
-  // Example of changing the bot's playing game to something useful. `client.user` is what the
-  // docs refer to as the "ClientUser".
+  console.log(`Bot has started, with ${client.users.cache.size} users, in ${client.channels.cache.size} channels of ${client.guilds.cache.size} guilds.`);
 });
 
 client.on("guildCreate", guild => {
@@ -53,22 +53,22 @@ client.on("guildDelete", guild => {
   console.log(`I have been removed from: ${guild.name} (id: ${guild.id})`);
 });
 
+client.on("message", message => {
+  // Test command (create output without requiring a user join/leave)
+  if (message.content == "infobot foobar") {
+    sendMessage("**User <@" + message.member.user.id + "> info:**\n**ID:** " + message.member.id + "\n**Avatar URL:** " + message.member.user.displayAvatarURL() + "\n**Is a bot?** " + message.member.user.bot + "\n**Account Created At**: " + message.member.user.createdAt, botLoggingChannel);
+  }
+}); 
 
-//when someone joins this event is called, the variable member is of type GuildMember in Discord.JS
 client.on('guildMemberAdd', member => {
-    sendMessage("User " + member.user + " has joined. ID: " + member.id + " - Avatar URL: " + member.user.avatarURL + " - is a bot? " + member.user.bot + " - Account Created At:" + member.user.createdAt, botLoggingChannel);
+  //when someone joins this event is called, the variable member is of type GuildMember in Discord.JS
+  sendMessage("**User <@" + message.member.user.id + "> has joined.**\n**ID:** " + message.member.id + "\n**Avatar URL:** " + message.member.user.displayAvatarURL() + "\n**Is a bot?** " + message.member.user.bot + "\n**Account Created At**: " + message.member.user.createdAt, botLoggingChannel);
 });
 
 client.login(auth.token);
 
 //the send message function
-function sendMessage(msg, channelID) {
-    //loop through all channels the bot has read permissions in
-    client.channels.forEach(function (channel) {
-        if (channel.id == channelID) {
-            if(channel.type == "text"){
-                channel.send(msg).then(message => console.log(`Sent message: ${message.content}`)).catch(console.error);
-            }
-        }
-    });
+function sendMessage(msg, channelName) {
+    client.channels.cache.find(i => i.name === channelName).send(msg)
+      .then(message => console.log(`Sent message: ${message.content}`)).catch(console.error);
 }
